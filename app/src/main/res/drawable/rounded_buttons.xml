@@ -1,0 +1,11 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <solid android:color="#6200EE"/> <!-- button color -->
+
+    <!-- Less rounded corners -->
+    <corners android:radius="18dp"/> <!-- gamay lang ang round -->
+
+    <!-- Optional border -->
+    <stroke android:width="2dp" android:color="#FFFFFF"/>
+</shape>
