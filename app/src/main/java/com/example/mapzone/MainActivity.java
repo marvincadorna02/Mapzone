@@ -3,6 +3,7 @@ package com.example.mapzone;
 import android.os.Bundle;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -10,6 +11,13 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -20,11 +28,55 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Map fragment
+        if (!Places.isInitialized()) {
+            Places.initialize(getApplicationContext(),
+                    "AIzaSyAuf_zfsV1iAxDlMQYLfbnh5Bk7VD7g9p8"); // imong API key
+        }
+
+        // Load Map Fragment
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
+        }
+
+        // 🔎 Autocomplete Search Bar (Places API)
+        AutocompleteSupportFragment autocompleteFragment =
+                (AutocompleteSupportFragment) getSupportFragmentManager()
+                        .findFragmentById(R.id.autocomplete_fragment);
+
+        if (autocompleteFragment != null) {
+            // Set fields to return
+            autocompleteFragment.setPlaceFields(Arrays.asList(
+                    Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
+
+            // Set hint text
+            autocompleteFragment.setHint("Try search a place");
+
+            // Apply custom background (para dili transparent)
+            if (autocompleteFragment.getView() != null) {
+                autocompleteFragment.getView().setBackgroundResource(R.drawable.autocomplete_bg);
+            }
+
+            // Listener kung mag-pili ug lugar
+            autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+                @Override
+                public void onPlaceSelected(Place place) {
+                    if (mMap != null && place.getLatLng() != null) {
+                        LatLng location = place.getLatLng();
+                        mMap.addMarker(new MarkerOptions()
+                                .position(location)
+                                .title(place.getName())
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 17));
+                    }
+                }
+
+                @Override
+                public void onError(com.google.android.gms.common.api.Status status) {
+                    // Log error if needed
+                }
+            });
         }
     }
 
@@ -35,43 +87,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Disable default zoom controls
         mMap.getUiSettings().setZoomControlsEnabled(false);
 
-        // Center sa Davao, zoom 15
+        // Default center sa Davao
         LatLng davao = new LatLng(7.0731, 125.6130);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(davao, 15));
-
-        // Add 10 restaurants as markers
-        LatLng[] restaurants = new LatLng[]{
-                new LatLng(7.0760, 125.6080), // Jack’s Ridge
-                new LatLng(7.0640, 125.6070), // Tiny Kitchen
-                new LatLng(7.0675, 125.6115), // Yellow Fin
-                new LatLng(7.0700, 125.6150), // Lachi’s Pastries
-                new LatLng(7.0650, 125.6100), // Rotisserie de Bacolod
-                new LatLng(7.0685, 125.6170), // Bigby’s
-                new LatLng(7.0710, 125.6095), // Davao Dencia’s
-                new LatLng(7.0695, 125.6125), // Gourdo’s
-                new LatLng(7.0740, 125.6145), // The Greenhouse
-                new LatLng(7.0720, 125.6180)  // RBG Bar & Grill
-        };
-
-        String[] names = new String[]{
-                "Jack’s Ridge",
-                "Tiny Kitchen",
-                "Yellow Fin",
-                "Lachi’s Pastries",
-                "Rotisserie de Bacolod",
-                "Bigby’s",
-                "Davao Dencia’s",
-                "Gourdo’s",
-                "The Greenhouse",
-                "RBG Bar & Grill"
-        };
-
-        for (int i = 0; i < restaurants.length; i++) {
-            mMap.addMarker(new MarkerOptions()
-                    .position(restaurants[i])
-                    .title(names[i])
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
-        }
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(davao, 13));
 
         // Custom zoom buttons
         Button zoomIn = findViewById(R.id.zoom_in);

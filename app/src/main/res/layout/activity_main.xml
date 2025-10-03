@@ -13,7 +13,19 @@
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
+
+    <!-- Search Bar -->
+    <fragment
+        android:id="@+id/autocomplete_fragment"
+        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
 
     <!-- Custom Zoom In Button -->
     <Button
@@ -21,7 +33,7 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:text="+"
-        android:textSize="36sp"
+        android:textSize="29sp"
         android:textColor="#FFFFFF"
         android:padding="0dp"
         android:elevation="6dp"
@@ -31,14 +43,13 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="112dp"/>
 
-
     <!-- Custom Zoom Out Button -->
     <Button
         android:id="@+id/zoom_out"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:text="-"
-        android:textSize="36sp"
+        android:textSize="32sp"
         android:textColor="#FFFFFF"
         android:padding="0dp"
         android:elevation="4dp"
@@ -46,7 +57,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="40dp"/>
-
+        android:layout_marginBottom="35dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
